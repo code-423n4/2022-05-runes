@@ -182,8 +182,6 @@ Questions:
 
 If the receiver tries to reject the transfer of ETH, we wrap in WETH and send that instead.
 
-## Withdrawing Funds
-
 # Areas of Concern
 
 - Withdrawing funds - is there any scenario where the team cannot withdraw funds?
