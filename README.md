@@ -7,12 +7,10 @@
 - $28,500 USDC main award pot
 - $1,500 USDC gas optimization award pot
 - Join [C4 Discord](https://discord.gg/code4rena) to register
-- Submit findings [using the C4 form](https://code4rena.com/contests/2022-05-runes-contest/submit)
+- Submit findings [using the C4 form](https://code4rena.com/contests/2022-05-forgotten-runes-warrior-guild-contest/submit)
 - [Read our guidelines for more details](https://docs.code4rena.com/roles/wardens)
 - Starts May 3, 2022 00:00 UTC
 - Ends May 5, 2022 23:59 UTC
-
-This repo will be made public before the start of the contest. (C4 delete this line when made public)
 
 ## Scope
 
