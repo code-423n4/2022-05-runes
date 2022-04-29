@@ -18,6 +18,12 @@ This repo will be made public before the start of the contest. (C4 delete this l
 
 All the Solidity files are included in the audit scope, except the ones in the `contracts/test` folder.
 
+## Overview and Readthrough Video
+
+<div align="center"><a href="https://www.youtube.com/watch?v=nUzl6-_o8e8"><img width="600" src="./doc/thumbnail.png"/></a></div>
+
+I've created a video that describes the project, the mint, and walks through the code which you are free to [watch here](https://www.youtube.com/watch?v=nUzl6-_o8e8).
+
 ## Coverage
 
 `npx hardhat coverage`
