@@ -41,7 +41,7 @@ Wardens! If you have any questions, please contact us!
 #### Dotta
 
 - **Twitter** : https://twitter.com/dotta
-- **Discord** : dotta#0001
+- **Discord** : `dotta#0001`
 
 # Introduction
 
@@ -181,10 +181,9 @@ Questions:
 
 - can we lower the gas cost of `issueRefunds`?
 - is the refund logic correct, even if refunds are issued multiple times?
+- buyers can pay an arbitrary amount above price in the DA phase. Does this introduce rounding errors on refunds?
 
 If the receiver tries to reject the transfer of ETH, we wrap in WETH and send that instead.
-
-## Withdrawing Funds
 
 # Areas of Concern
 
