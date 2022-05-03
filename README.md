@@ -18,7 +18,7 @@ All the Solidity files are included in the audit scope, except the ones in the `
 
 ## Overview and Readthrough Video
 
-<div align="center"><a href="https://www.youtube.com/watch?v=nUzl6-_o8e8"><img width="600" src="./doc/thumbnail.png"/></a></div>
+<div align="center"><a href="https://www.youtube.com/watch?v=nUzl6-_o8e8"><img width="600" src="https://github.com/code-423n4/2022-05-runes/blob/main/doc/thumbnail.png"/></a></div>
 
 I've created a video that describes the project, the mint, and walks through the code which you are free to [watch here](https://www.youtube.com/watch?v=nUzl6-_o8e8).
 
