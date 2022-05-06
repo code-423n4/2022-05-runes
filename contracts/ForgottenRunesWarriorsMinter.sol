@@ -56,6 +56,10 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     /// @notice The address of the WETH contract
     address public weth;
 
+    /// @notice The address of the refund operator
+    /// @dev The owner may be a multisig but refunding is easier with a script, so we allow a separate refunder/operator address
+    address public refunder;
+
     /// @notice The start price of the DA
     uint256 public startPrice = 2.5 ether;
 
@@ -114,6 +118,7 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
         setWarriorsAddress(_warriors);
         setWethAddress(_weth);
         setVaultAddress(payable(msg.sender));
+        setRefunderAddress(msg.sender);
     }
 
     /*
@@ -352,9 +357,9 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
      */
     function issueRefunds(uint256 startIdx, uint256 endIdx)
         public
-        onlyOwner
         nonReentrant
     {
+        require(refunder == msg.sender, 'caller is not the refunder');
         for (uint256 i = startIdx; i < endIdx + 1; i++) {
             _refundAddress(daMinters[i]);
         }
@@ -364,7 +369,8 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
      * @notice issues a refund for the address
      * @param minter address the address to refund
      */
-    function refundAddress(address minter) public onlyOwner nonReentrant {
+    function refundAddress(address minter) public nonReentrant {
+        require(refunder == msg.sender, 'caller is not the refunder');
         _refundAddress(minter);
     }
 
@@ -548,6 +554,13 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
      */
     function setWethAddress(address _newWethAddress) public onlyOwner {
         weth = _newWethAddress;
+    }
+
+    /**
+     * @notice set the refunder address
+     */
+    function setRefunderAddress(address _newRefunderAddress) public onlyOwner {
+        refunder = _newRefunderAddress;
     }
 
     /**

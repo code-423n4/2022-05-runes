@@ -446,6 +446,25 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
         balanceBeforeRefund.add(expectedRefund)
       );
     });
+
+    describe('when a non-refunder tries', () => {
+      beforeEach(() => {
+        contract = contract.connect(eve);
+      });
+
+      it('should not allow issueRefunds', async () => {
+        await expect(contract.issueRefunds(0, 0)).to.be.revertedWith(
+          'caller is not the refunder'
+        );
+      });
+
+      it('should not allow refundAddress', async () => {
+        await expect(contract.refundAddress(eve.address)).to.be.revertedWith(
+          'caller is not the refunder'
+        );
+      });
+    });
+
     it('should refund someone who bought more than once', async () => {
       {
         await as(alice);
@@ -479,6 +498,7 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
 
       {
         await as(alice);
+
         await contract.bidSummon(2, { value: parseEther('1.9').mul(2) });
         expect(await contract.daAmountPaid(alice.address)).to.eq(
           parseEther('2.5').add(parseEther('1.9').mul(2))
@@ -1230,6 +1250,11 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
           'Ownable: caller is not the owner'
         );
       });
+      it('should not setRefunderAddress', async () => {
+        await expect(
+          contract.setRefunderAddress(eve.address)
+        ).to.be.revertedWith('Ownable: caller is not the owner');
+      });
       it('should not setStartPrice', async () => {
         await expect(contract.setStartPrice(1)).to.be.revertedWith(
           'Ownable: caller is not the owner'
@@ -1345,6 +1370,10 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
       it('should setWethAddress', async () => {
         await contract.setWethAddress(wallet.address);
         expect(await contract.weth()).to.equal(wallet.address);
+      });
+      it('should setRefunderAddress', async () => {
+        await contract.setRefunderAddress(wallet.address);
+        expect(await contract.refunder()).to.equal(wallet.address);
       });
       it('should setStartPrice', async () => {
         await contract.setStartPrice(123);
