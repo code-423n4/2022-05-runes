@@ -1112,9 +1112,21 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
         balanceBeforeWithdraw.add(100)
       );
     });
+    it('should allow the owner to withdrawClassic an arbitrary amount', async () => {
+      const balanceBeforeWithdraw = await provider.getBalance(carol.address);
+      await contract.withdrawClassic(99);
+      expect(await provider.getBalance(carol.address)).to.eq(
+        balanceBeforeWithdraw.add(99)
+      );
+    });
     it('should not allow someone other than owner to withdraw', async () => {
       as(eve);
       const tx = contract.withdraw(1000);
+      await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
+    });
+    it('should not allow someone other than owner to withdrawClassic', async () => {
+      as(eve);
+      const tx = contract.withdrawClassic(1000);
       await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
     });
     it('should not allow someone other than owner to withdraw all', async () => {
@@ -1351,8 +1363,13 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
         expect(await contract.daDropInterval()).to.equal(123);
       });
       it('should setFinalPrice', async () => {
-        await contract.setFinalPrice(123);
-        expect(await contract.finalPrice()).to.equal(123);
+        await contract.setFinalPrice(parseEther('0.6'));
+        expect(await contract.finalPrice()).to.equal(parseEther('0.6'));
+      });
+      it('should not setFinalPrice below lowest price', async () => {
+        await expect(contract.setFinalPrice(1)).to.be.revertedWith(
+          'finalPrice cant be less than lowestPrice'
+        );
       });
       it('should setMaxDaSupply', async () => {
         await contract.setMaxDaSupply(123);
