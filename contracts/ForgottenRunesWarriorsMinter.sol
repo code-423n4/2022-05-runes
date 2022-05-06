@@ -583,6 +583,10 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
      * @dev this is set automatically if the dutch-auction sells out, but needs to be set manually if the DA fails to sell out
      */
     function setFinalPrice(uint256 _newPrice) public onlyOwner {
+        require(
+            _newPrice >= lowestPrice,
+            'finalPrice cant be less than lowestPrice'
+        );
         finalPrice = _newPrice;
     }
 

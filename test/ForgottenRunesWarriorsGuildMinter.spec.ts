@@ -1363,8 +1363,13 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
         expect(await contract.daDropInterval()).to.equal(123);
       });
       it('should setFinalPrice', async () => {
-        await contract.setFinalPrice(123);
-        expect(await contract.finalPrice()).to.equal(123);
+        await contract.setFinalPrice(parseEther('0.6'));
+        expect(await contract.finalPrice()).to.equal(parseEther('0.6'));
+      });
+      it('should not setFinalPrice below lowest price', async () => {
+        await expect(contract.setFinalPrice(1)).to.be.revertedWith(
+          'finalPrice cant be less than lowestPrice'
+        );
       });
       it('should setMaxDaSupply', async () => {
         await contract.setMaxDaSupply(123);
