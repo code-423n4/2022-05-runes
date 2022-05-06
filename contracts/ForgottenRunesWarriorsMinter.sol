@@ -6,6 +6,7 @@ import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import '@openzeppelin/contracts/security/Pausable.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
+import '@openzeppelin/contracts/utils/Address.sol';
 import './interfaces/IWETH.sol';
 import './interfaces/IForgottenRunesWarriorsGuild.sol';
 
@@ -13,6 +14,8 @@ import './interfaces/IForgottenRunesWarriorsGuild.sol';
  * @dev This implements the minter of the Forgotten Runes Warriors Guild. They are {ERC721} tokens.
  */
 contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
+    using Address for address payable;
+
     /// @notice The start timestamp for the Dutch Auction (DA) sale and price
     uint256 public daStartTime =
         0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
@@ -48,7 +51,7 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     IForgottenRunesWarriorsGuild public warriors;
 
     /// @notice The address of the vault
-    address public vault;
+    address payable public vault;
 
     /// @notice The address of the WETH contract
     address public weth;
@@ -110,7 +113,7 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     constructor(IForgottenRunesWarriorsGuild _warriors, address _weth) {
         setWarriorsAddress(_warriors);
         setWethAddress(_weth);
-        setVaultAddress(msg.sender);
+        setVaultAddress(payable(msg.sender));
     }
 
     /*
@@ -524,7 +527,10 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     /**
      * @notice set the vault address where the funds are withdrawn
      */
-    function setVaultAddress(address _newVaultAddress) public onlyOwner {
+    function setVaultAddress(address payable _newVaultAddress)
+        public
+        onlyOwner
+    {
         vault = _newVaultAddress;
     }
 
@@ -602,10 +608,19 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     }
 
     /**
-     * @notice Withdraw funds to the vault
+     * @notice Withdraw funds to the vault using sendValue
      * @param _amount uint256 the amount to withdraw
      */
     function withdraw(uint256 _amount) public onlyOwner {
+        require(address(vault) != address(0), 'no vault');
+        vault.sendValue(_amount);
+    }
+
+    /**
+     * @notice Withdraw funds to the vault, the old-school way
+     * @param _amount uint256 the amount to withdraw
+     */
+    function withdrawClassic(uint256 _amount) public onlyOwner {
         require(address(vault) != address(0), 'no vault');
         require(payable(vault).send(_amount));
     }

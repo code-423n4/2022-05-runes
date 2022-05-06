@@ -1112,9 +1112,21 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
         balanceBeforeWithdraw.add(100)
       );
     });
+    it('should allow the owner to withdrawClassic an arbitrary amount', async () => {
+      const balanceBeforeWithdraw = await provider.getBalance(carol.address);
+      await contract.withdrawClassic(99);
+      expect(await provider.getBalance(carol.address)).to.eq(
+        balanceBeforeWithdraw.add(99)
+      );
+    });
     it('should not allow someone other than owner to withdraw', async () => {
       as(eve);
       const tx = contract.withdraw(1000);
+      await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
+    });
+    it('should not allow someone other than owner to withdrawClassic', async () => {
+      as(eve);
+      const tx = contract.withdrawClassic(1000);
       await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
     });
     it('should not allow someone other than owner to withdraw all', async () => {
