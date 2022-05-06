@@ -100,7 +100,7 @@ contract ForgottenRunesWarriorsGuild is
         require(numMinted < MAX_WARRIORS, 'All warriors have been summoned');
         require(_msgSender() == minter, 'Not a minter');
         uint256 tokenId = numMinted;
-        _safeMint(recipient, tokenId);
+        _mint(recipient, tokenId);
         numMinted += 1;
         return tokenId;
     }
@@ -160,7 +160,7 @@ contract ForgottenRunesWarriorsGuild is
      * @dev ETH should not be sent to this contract, but in the case that it is
      * sent by accident, this function allows the owner to withdraw it.
      */
-    function withdrawAll() public payable onlyOwner {
+    function withdrawAll() public onlyOwner {
         require(payable(msg.sender).send(address(this).balance));
     }
 
