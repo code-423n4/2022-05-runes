@@ -84,7 +84,7 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     /// @notice Tracks if a given address minted in the mintlist
     mapping(address => bool) public mintlistMinted;
 
-    /// @notice Tracks the total count of NFTs claimed by a given address
+    /// @notice Tracks whether an address claimed a free NFT
     mapping(address => bool) public claimlistMinted;
 
     /// @notice The total number of tokens reserved for the DA phase
