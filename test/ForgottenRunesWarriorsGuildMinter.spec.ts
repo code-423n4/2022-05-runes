@@ -405,6 +405,7 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
     let snapshot;
     beforeEach(async () => {
       snapshot = await provider.send('evm_snapshot', []);
+
       const now = (await provider.getBlock(await provider.getBlockNumber()))
         .timestamp;
 

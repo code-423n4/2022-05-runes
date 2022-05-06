@@ -414,7 +414,7 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
 
     /**
      * @notice Transfer ETH and return the success status.
-     * @dev This function only forwards 30,000 gas to the callee.
+     * @dev This function only forwards 2,300 gas to the callee.
      * @param to account who to send the ETH to
      * @param value uint256 how much ETH to send
      */
@@ -422,7 +422,7 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
         internal
         returns (bool)
     {
-        (bool success, ) = to.call{value: value, gas: 30_000}(new bytes(0));
+        (bool success, ) = to.call{value: value, gas: 2_300}(new bytes(0));
         return success;
     }
 
