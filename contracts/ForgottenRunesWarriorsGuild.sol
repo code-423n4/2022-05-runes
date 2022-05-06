@@ -100,7 +100,7 @@ contract ForgottenRunesWarriorsGuild is
         require(numMinted < MAX_WARRIORS, 'All warriors have been summoned');
         require(_msgSender() == minter, 'Not a minter');
         uint256 tokenId = numMinted;
-        _safeMint(recipient, tokenId);
+        _mint(recipient, tokenId);
         numMinted += 1;
         return tokenId;
     }
