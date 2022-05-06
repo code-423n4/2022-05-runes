@@ -1408,6 +1408,14 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
         await contract.setMaxForClaim(123);
         expect(await contract.maxForClaim()).to.equal(123);
       });
+      it('should deposit funds', async () => {
+        const balanceBeforeDeposit = await provider.getBalance(
+          contract.address
+        );
+        await contract.deposit({ value: 123 });
+        const balanceAfterDeposit = await provider.getBalance(contract.address);
+        expect(balanceAfterDeposit).to.equal(balanceBeforeDeposit.add(123));
+      });
     });
   });
 });

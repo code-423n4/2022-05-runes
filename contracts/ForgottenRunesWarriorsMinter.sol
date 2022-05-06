@@ -660,4 +660,9 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
         require(address(msg.sender) != address(0));
         token.transfer(msg.sender, amount);
     }
+
+    /**
+     * @dev Include a payable function in case we need to refill funds for any reason
+     */
+    function deposit() external payable onlyOwner {}
 }
