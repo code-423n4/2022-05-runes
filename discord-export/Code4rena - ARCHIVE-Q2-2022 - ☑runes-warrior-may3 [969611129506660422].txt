@@ -1,0 +1,177 @@
+==============================================================
+Guild: Code4rena
+Channel: ARCHIVE-Q2-2022 / ☑runes-warrior-may3
+==============================================================
+
+[04/29/2022 2:50 PM] itsmetechjay
+👋 Hello and welcome to the contest channel for the $30K USDC **Forgotten Runes Warrior Guild** contest!
+
+📆 Contest opens May 3, 2022 at 0:00 UTC and runs through May 5, 2022 at 23:59 UTC (3 days).
+
+Please give a warm welcome to the Forgotten Runes team, particularly @dotta, who will be available for questions either here in the channel or via DM.
+
+We'll be posting relevant links, documentation, etc. here, so if you intend to participate in this contest, consider enabling notifications for this channel. 🐺 ⏰
+
+Contest Page: https://code4rena.com/contests/2022-05-forgotten-runes-warrior-guild-contest
+
+{Embed}
+https://code4rena.com/contests/2022-05-forgotten-runes-warrior-guild-contest
+Code4rena Forgotten Runes Warrior Guild contest
+$30,000 USDC
+3 May 2022—5 May 2022
+Code4rena - ARCHIVE-Q2-2022 - ☑runes-warrior-may3 [969611129506660422].txt_Files/C4-banner-7C19B.png
+
+{Reactions}
+🔥 (8) ⚔️ (5) DiscoWizard 
+
+[04/30/2022 2:09 PM] .dotta
+👋
+
+{Reactions}
+👋 (21) gm (7) 
+
+[05/03/2022 12:48 AM] okkothejawa
+@dotta do not accept DM's from non-friends, couldn't DM
+
+
+[05/03/2022 2:14 AM] .dotta
+fixed thanks
+
+
+[05/03/2022 3:46 PM] 0xsorrynotsorry
+@dotta can you check DM please
+
+{Reactions}
+👍 
+
+[05/03/2022 8:13 PM] horsefacts
+Thanks for the video, @dotta! I really appreciate the overview. Is there any context you can share about the design of the price function? I'm curious if there's any specific motivation for using several steps rather than a pure linear decrease.
+
+{Reactions}
+💯 
+
+[05/03/2022 8:42 PM] .dotta
+it's just easier for people to understand
+
+
+[05/03/2022 8:43 PM] .dotta
+I had it as a linear decrease in the beginning, but steps seemed easier to communicate to the community
+
+{Reactions}
+👍 (3) 
+
+[05/03/2022 8:48 PM] horsefacts
+Thanks!
+
+
+[05/04/2022 8:35 AM] oridabush
+Is the wETH gonna be your implementation? Or a known wETH token
+
+
+[05/04/2022 3:05 PM] .dotta
+the normal WETH token
+
+{Reactions}
+👍🏽 
+
+[05/04/2022 8:36 PM] kartoonjoy
+@Etherean
+
+{Reactions}
+🤝 
+
+[05/06/2022 12:02 AM] C4
+**🚨 CONTEST ALERT**
+
+@🐺wardens The **Forgotten Runes Warrior Guild **contest is now closed! Huge thanks to everyone who participated 🔍, whether you submitted a finding or not.
+
+What's next: the Forgotten Runes team will review the findings over the next couple of days, and then we'll pass them off to the judge. Keep an eye on #📢announcementsfor regular updates on how the contest is progressing through awarding 🤑🏆, judging 🧑‍⚖️ and reporting 📜. Feel free to ping a contest administrator if you have questions along the way!
+
+{Reactions}
+yay 
+
+[05/06/2022 12:23 AM] .dotta
+thank you everyone!!!!!!!!!!
+
+{Reactions}
+C4Keycap (26) 🥂 (16) 🎉 (13) 
+
+[05/09/2022 6:49 PM] rotcivegaf
+When que hace the report? Im impatient
+
+
+[05/09/2022 7:12 PM] liveactionllamac4
+Hang in there! :hi5: The sponsor is currently reviewing the submissions and then it will get handed off to a judge. There were close to 300 submissions, so it was a pretty big one and takes a bit of time for them to go through. After judging is finished and awards announced, then we can start work on getting that report out to ya! 🙂
+
+{Reactions}
+💙 
+
+[05/09/2022 7:13 PM] czar102
+Woow - 300 submissions is a lot, are those mostly QAs and Gas reports or are there also many meds/highs?
+
+
+[05/09/2022 7:45 PM] liveactionllamac4
+Looks like 120ish total medium/high submissions, and just under 80 submissions each for the Gas and QA categories. These are just early numbers though and won't necessarily reflect what the repo looks like after de-duping, etc.
+
+{Reactions}
+hi5 (5) 
+
+[05/10/2022 3:30 AM] hickuphh3
+woahh does that mean ~80 wardens / teams participated in the contest? 😮
+
+
+[05/10/2022 5:05 AM] liveactionllamac4
+Appears so! These are still early numbers though, so not sure if all participants submitted valid reports, etc.
+
+{Reactions}
+🤯 (6) 
+
+[05/10/2022 10:03 AM] p_crypt0
+Maybe some people submitted individual reports for low/qa ones as previously? Pretty immense if not, also means competition is so high now😅
+
+{Reactions}
+💯 (2) 
+
+[05/10/2022 11:00 PM] dravee
+I only participated as a 4-people team 👀. There might just be more than 100 people on this contest 👀
+
+{Reactions}
+😵 (3) 
+
+[05/10/2022 11:52 PM] shung69
+this was my first participation.
+
+{Reactions}
+🎉 (8) 
+
+[05/11/2022 12:46 AM] rotcivegaf
+me to, its good start for first time
+
+{Reactions}
+👍 (7) hi5 (2) 
+
+[05/23/2022 6:59 PM] 0x4non
+Guys! Any eta for releasing the findings?
+
+
+[05/25/2022 2:10 AM] liveactionllamac4
+Hi! This one is still in sponsor review, but hopefully moving to judging shortly. Thanks for your patience!
+
+{Reactions}
+C4Keycap (6) 
+
+[06/18/2022 8:21 AM] un_for_given
+Hi, any news about the results?
+
+{Reactions}
+👍 
+
+[06/22/2022 11:40 PM] liveactionllamac4
+The preliminary judging results are currently with the sponsor for review and any additional discussions, before finalizing. So hopefully this one will be finishing up soon! 🤞
+
+{Reactions}
+hi5 (2) 
+
+==============================================================
+Exported 28 message(s)
+==============================================================
