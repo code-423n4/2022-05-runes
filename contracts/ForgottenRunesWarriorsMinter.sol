@@ -1,4 +1,4 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.6;
 
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
@@ -613,7 +613,7 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     /**
      * @notice Withdraw all funds to the vault
      */
-    function withdrawAll() public payable onlyOwner {
+    function withdrawAll() public onlyOwner {
         require(address(vault) != address(0), 'no vault');
         require(payable(vault).send(address(this).balance));
     }
