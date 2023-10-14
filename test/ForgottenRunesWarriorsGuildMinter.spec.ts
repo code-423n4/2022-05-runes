@@ -405,6 +405,7 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
     let snapshot;
     beforeEach(async () => {
       snapshot = await provider.send('evm_snapshot', []);
+
       const now = (await provider.getBlock(await provider.getBlockNumber()))
         .timestamp;
 
@@ -446,6 +447,25 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
         balanceBeforeRefund.add(expectedRefund)
       );
     });
+
+    describe('when a non-refunder tries', () => {
+      beforeEach(() => {
+        contract = contract.connect(eve);
+      });
+
+      it('should not allow issueRefunds', async () => {
+        await expect(contract.issueRefunds(0, 0)).to.be.revertedWith(
+          'caller is not the refunder'
+        );
+      });
+
+      it('should not allow refundAddress', async () => {
+        await expect(contract.refundAddress(eve.address)).to.be.revertedWith(
+          'caller is not the refunder'
+        );
+      });
+    });
+
     it('should refund someone who bought more than once', async () => {
       {
         await as(alice);
@@ -479,6 +499,7 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
 
       {
         await as(alice);
+
         await contract.bidSummon(2, { value: parseEther('1.9').mul(2) });
         expect(await contract.daAmountPaid(alice.address)).to.eq(
           parseEther('2.5').add(parseEther('1.9').mul(2))
@@ -1112,9 +1133,21 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
         balanceBeforeWithdraw.add(100)
       );
     });
+    it('should allow the owner to withdrawClassic an arbitrary amount', async () => {
+      const balanceBeforeWithdraw = await provider.getBalance(carol.address);
+      await contract.withdrawClassic(99);
+      expect(await provider.getBalance(carol.address)).to.eq(
+        balanceBeforeWithdraw.add(99)
+      );
+    });
     it('should not allow someone other than owner to withdraw', async () => {
       as(eve);
       const tx = contract.withdraw(1000);
+      await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
+    });
+    it('should not allow someone other than owner to withdrawClassic', async () => {
+      as(eve);
+      const tx = contract.withdrawClassic(1000);
       await expect(tx).to.be.revertedWith('Ownable: caller is not the owner');
     });
     it('should not allow someone other than owner to withdraw all', async () => {
@@ -1217,6 +1250,11 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
         await expect(contract.setWethAddress(eve.address)).to.be.revertedWith(
           'Ownable: caller is not the owner'
         );
+      });
+      it('should not setRefunderAddress', async () => {
+        await expect(
+          contract.setRefunderAddress(eve.address)
+        ).to.be.revertedWith('Ownable: caller is not the owner');
       });
       it('should not setStartPrice', async () => {
         await expect(contract.setStartPrice(1)).to.be.revertedWith(
@@ -1334,6 +1372,10 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
         await contract.setWethAddress(wallet.address);
         expect(await contract.weth()).to.equal(wallet.address);
       });
+      it('should setRefunderAddress', async () => {
+        await contract.setRefunderAddress(wallet.address);
+        expect(await contract.refunder()).to.equal(wallet.address);
+      });
       it('should setStartPrice', async () => {
         await contract.setStartPrice(123);
         expect(await contract.startPrice()).to.equal(123);
@@ -1351,8 +1393,13 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
         expect(await contract.daDropInterval()).to.equal(123);
       });
       it('should setFinalPrice', async () => {
-        await contract.setFinalPrice(123);
-        expect(await contract.finalPrice()).to.equal(123);
+        await contract.setFinalPrice(parseEther('0.6'));
+        expect(await contract.finalPrice()).to.equal(parseEther('0.6'));
+      });
+      it('should not setFinalPrice below lowest price', async () => {
+        await expect(contract.setFinalPrice(1)).to.be.revertedWith(
+          'finalPrice cant be less than lowestPrice'
+        );
       });
       it('should setMaxDaSupply', async () => {
         await contract.setMaxDaSupply(123);
@@ -1361,6 +1408,14 @@ describe('ForgottenRunesWarriorsGuildMinter', () => {
       it('should setMaxForClaim', async () => {
         await contract.setMaxForClaim(123);
         expect(await contract.maxForClaim()).to.equal(123);
+      });
+      it('should deposit funds', async () => {
+        const balanceBeforeDeposit = await provider.getBalance(
+          contract.address
+        );
+        await contract.deposit({ value: 123 });
+        const balanceAfterDeposit = await provider.getBalance(contract.address);
+        expect(balanceAfterDeposit).to.equal(balanceBeforeDeposit.add(123));
       });
     });
   });

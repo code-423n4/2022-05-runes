@@ -1,4 +1,4 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.6;
 
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
@@ -6,6 +6,7 @@ import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import '@openzeppelin/contracts/security/Pausable.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
+import '@openzeppelin/contracts/utils/Address.sol';
 import './interfaces/IWETH.sol';
 import './interfaces/IForgottenRunesWarriorsGuild.sol';
 
@@ -13,6 +14,8 @@ import './interfaces/IForgottenRunesWarriorsGuild.sol';
  * @dev This implements the minter of the Forgotten Runes Warriors Guild. They are {ERC721} tokens.
  */
 contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
+    using Address for address payable;
+
     /// @notice The start timestamp for the Dutch Auction (DA) sale and price
     uint256 public daStartTime =
         0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
@@ -48,10 +51,14 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     IForgottenRunesWarriorsGuild public warriors;
 
     /// @notice The address of the vault
-    address public vault;
+    address payable public vault;
 
     /// @notice The address of the WETH contract
     address public weth;
+
+    /// @notice The address of the refund operator
+    /// @dev The owner may be a multisig but refunding is easier with a script, so we allow a separate refunder/operator address
+    address public refunder;
 
     /// @notice The start price of the DA
     uint256 public startPrice = 2.5 ether;
@@ -84,7 +91,7 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     /// @notice Tracks if a given address minted in the mintlist
     mapping(address => bool) public mintlistMinted;
 
-    /// @notice Tracks the total count of NFTs claimed by a given address
+    /// @notice Tracks whether an address claimed a free NFT
     mapping(address => bool) public claimlistMinted;
 
     /// @notice The total number of tokens reserved for the DA phase
@@ -110,7 +117,8 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     constructor(IForgottenRunesWarriorsGuild _warriors, address _weth) {
         setWarriorsAddress(_warriors);
         setWethAddress(_weth);
-        setVaultAddress(msg.sender);
+        setVaultAddress(payable(msg.sender));
+        setRefunderAddress(msg.sender);
     }
 
     /*
@@ -349,9 +357,9 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
      */
     function issueRefunds(uint256 startIdx, uint256 endIdx)
         public
-        onlyOwner
         nonReentrant
     {
+        require(refunder == msg.sender, 'caller is not the refunder');
         for (uint256 i = startIdx; i < endIdx + 1; i++) {
             _refundAddress(daMinters[i]);
         }
@@ -361,7 +369,8 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
      * @notice issues a refund for the address
      * @param minter address the address to refund
      */
-    function refundAddress(address minter) public onlyOwner nonReentrant {
+    function refundAddress(address minter) public nonReentrant {
+        require(refunder == msg.sender, 'caller is not the refunder');
         _refundAddress(minter);
     }
 
@@ -405,7 +414,7 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
 
     /**
      * @notice Transfer ETH and return the success status.
-     * @dev This function only forwards 30,000 gas to the callee.
+     * @dev This function only forwards 2,300 gas to the callee.
      * @param to account who to send the ETH to
      * @param value uint256 how much ETH to send
      */
@@ -413,7 +422,7 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
         internal
         returns (bool)
     {
-        (bool success, ) = to.call{value: value, gas: 30_000}(new bytes(0));
+        (bool success, ) = to.call{value: value, gas: 2_300}(new bytes(0));
         return success;
     }
 
@@ -524,7 +533,10 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     /**
      * @notice set the vault address where the funds are withdrawn
      */
-    function setVaultAddress(address _newVaultAddress) public onlyOwner {
+    function setVaultAddress(address payable _newVaultAddress)
+        public
+        onlyOwner
+    {
         vault = _newVaultAddress;
     }
 
@@ -542,6 +554,13 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
      */
     function setWethAddress(address _newWethAddress) public onlyOwner {
         weth = _newWethAddress;
+    }
+
+    /**
+     * @notice set the refunder address
+     */
+    function setRefunderAddress(address _newRefunderAddress) public onlyOwner {
+        refunder = _newRefunderAddress;
     }
 
     /**
@@ -577,6 +596,10 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
      * @dev this is set automatically if the dutch-auction sells out, but needs to be set manually if the DA fails to sell out
      */
     function setFinalPrice(uint256 _newPrice) public onlyOwner {
+        require(
+            _newPrice >= lowestPrice,
+            'finalPrice cant be less than lowestPrice'
+        );
         finalPrice = _newPrice;
     }
 
@@ -602,10 +625,19 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     }
 
     /**
-     * @notice Withdraw funds to the vault
+     * @notice Withdraw funds to the vault using sendValue
      * @param _amount uint256 the amount to withdraw
      */
     function withdraw(uint256 _amount) public onlyOwner {
+        require(address(vault) != address(0), 'no vault');
+        vault.sendValue(_amount);
+    }
+
+    /**
+     * @notice Withdraw funds to the vault, the old-school way
+     * @param _amount uint256 the amount to withdraw
+     */
+    function withdrawClassic(uint256 _amount) public onlyOwner {
         require(address(vault) != address(0), 'no vault');
         require(payable(vault).send(_amount));
     }
@@ -613,7 +645,7 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     /**
      * @notice Withdraw all funds to the vault
      */
-    function withdrawAll() public payable onlyOwner {
+    function withdrawAll() public onlyOwner {
         require(address(vault) != address(0), 'no vault');
         require(payable(vault).send(address(this).balance));
     }
@@ -628,4 +660,9 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
         require(address(msg.sender) != address(0));
         token.transfer(msg.sender, amount);
     }
+
+    /**
+     * @dev Include a payable function in case we need to refill funds for any reason
+     */
+    function deposit() external payable onlyOwner {}
 }
