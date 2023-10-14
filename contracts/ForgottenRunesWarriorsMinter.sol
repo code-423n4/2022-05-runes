@@ -1,4 +1,4 @@
-pragma solidity ^0.8.0;
+pragma solidity 0.8.6;
 
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
@@ -84,7 +84,7 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     /// @notice Tracks if a given address minted in the mintlist
     mapping(address => bool) public mintlistMinted;
 
-    /// @notice Tracks the total count of NFTs claimed by a given address
+    /// @notice Tracks whether an address claimed a free NFT
     mapping(address => bool) public claimlistMinted;
 
     /// @notice The total number of tokens reserved for the DA phase
@@ -613,7 +613,7 @@ contract ForgottenRunesWarriorsMinter is Ownable, Pausable, ReentrancyGuard {
     /**
      * @notice Withdraw all funds to the vault
      */
-    function withdrawAll() public payable onlyOwner {
+    function withdrawAll() public onlyOwner {
         require(address(vault) != address(0), 'no vault');
         require(payable(vault).send(address(this).balance));
     }
